@@ -5,6 +5,8 @@ Use this checklist after reading the relevant topic reference. Report verified p
 ## Correctness and behavior
 
 - Does the change preserve the requested behavior and public API?
+- Are language semantics based on the current Go specification or standard-library documentation rather than an outdated example?
+- When guidance overlaps, were repository rules, the current Google baseline, and Effective Go applied in the documented authority order?
 - Are errors handled at the right ownership boundary and wrapped with useful context?
 - Can cancellation, cleanup, and goroutine completion be proven?
 - Are nil, zero, empty, timeout, retry, and partial-failure cases explicit?
@@ -30,6 +32,7 @@ Use this checklist after reading the relevant topic reference. Report verified p
 - Is `defer` scoped to the resource owner, without retaining resources across an unbounded loop?
 - Are `new`, `make`, composite literals, slices, `append`, nil maps, and comma-ok lookups used with their actual language semantics?
 - Are receiver choices, embedding, type assertions, and blank-identifier uses intentional and visible at the API boundary?
+- Do one-method interfaces and canonical methods use established names and signatures?
 - Are channel closure, goroutine ownership, panic, and recover constrained to an explicit protocol or boundary?
 
 ## Common libraries

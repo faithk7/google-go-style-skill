@@ -18,6 +18,18 @@ Use this skill to make Go code clear, simple, consistent, and maintainable while
 - Preserve public behavior and error semantics during style refactors. Call out any unavoidable behavior change before making it.
 - Keep comments focused on intent, invariants, constraints, or non-obvious tradeoffs. Do not narrate syntax.
 
+## Authority and conflicts
+
+Resolve overlapping guidance in this order:
+
+1. Go language semantics and the current Go specification or standard-library documentation.
+2. Deliberate repository-local instructions, when they do not violate correctness, API safety, security, or resource ownership.
+3. The current pinned Google Go Style Guide for modern style and API decisions.
+4. [`effective-go.md`](references/effective-go.md) for historical core-language idioms and examples.
+5. Personal preference.
+
+Treat Effective Go examples as explanatory, not as mandatory architecture. When an older example conflicts with current guidance, preserve the language semantics and apply the current Google rule. In particular, do not use historical `panic`/`recover`, initialization, error-prefix, or library examples to justify behavior that the current baseline rejects.
+
 ## Focused requests
 
 When the user names one or more style concerns, treat them as an explicit focus across writing, refactoring, and review:
@@ -77,7 +89,7 @@ Use `P0` for a blocking correctness or safety issue, `P1` for a significant defe
 - [`errors-context-and-logging.md`](references/errors-context-and-logging.md): error flow, wrapping, strings, context propagation, and logging.
 - [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md): interface ownership, zero values, goroutine lifetimes, channels, and cancellation.
 - [`language-and-api-design.md`](references/language-and-api-design.md): literals, receivers, copying, panic policy, generics, and function arguments.
-- [`effective-go.md`](references/effective-go.md): core language mechanics and established idioms for declarations, control flow, defer, allocation, data structures, interfaces, embedding, concurrency, and panic/recover.
+- [`effective-go.md`](references/effective-go.md): core language mechanics and established idioms for formatting, names, control flow, functions, data structures, initialization, interfaces, embedding, concurrency, errors, and panic/recover.
 - [`common-libraries.md`](references/common-libraries.md): flags, logging, and cryptographic randomness at program boundaries.
 - [`packages-and-documentation.md`](references/packages-and-documentation.md): package boundaries, utility packages, public APIs, and documentation.
 - [`testing.md`](references/testing.md): subtests, table-driven tests, helpers, test packages, and failure diagnostics.

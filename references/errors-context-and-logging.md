@@ -26,6 +26,8 @@ Wrap errors when crossing a package, operation, or user-visible boundary. Includ
 
 Use lowercase error strings without punctuation or redundant prefixes. Put structured context in wrapping fields or logs, not in an error string that callers must parse.
 
+Effective Go's historical examples sometimes prefix an error string with its origin. Do not add such a prefix automatically: preserve an established public format when compatibility requires it, but otherwise identify the operation through `%w`, structured error data, or the reporting boundary.
+
 ## GO-ERR-004: Separate handling from reporting
 
 Handle an error where the program can recover or choose a policy. Log it at the boundary that owns reporting. Avoid logging and returning the same error repeatedly unless the layers add distinct actionable context.

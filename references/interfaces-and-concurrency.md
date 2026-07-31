@@ -12,6 +12,10 @@ Expose the smallest behavior set that supports the caller. Split an interface wh
 
 Document an interface's contract, edge cases, ownership, and expected errors. Do not add an interface, mock, or exported test double solely to make a concrete implementation easy to fake; use the real implementation and public API when that gives a more faithful test.
 
+## GO-API-003: Use canonical interface and method names
+
+Name a one-method interface after its behavior, commonly with an `-er` form such as `Reader`, `Writer`, or `Formatter`. Use established method names and signatures such as `Read`, `Write`, `Close`, `Flush`, and `String` only for their conventional meanings; do not add an `I` prefix or invent a near-synonym for a standard contract.
+
 ## GO-CONC-001: Make goroutine lifetimes explicit
 
 For every goroutine, identify who starts it, what stops it, how errors are surfaced, and what synchronization proves completion. Prefer structured ownership with `context`, channels, `sync.WaitGroup`, or an existing project-approved coordination primitive.
