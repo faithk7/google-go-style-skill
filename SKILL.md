@@ -1,6 +1,6 @@
 ---
 name: google-go-style
-description: Apply Google's Go Style Guide principles when writing, refactoring, or reviewing Go code, either comprehensively or with a natural-language focus. Use for focused or general work on package organization, naming, formatting, comments, API design, errors, context, logging, interfaces, concurrency, documentation, testing, and maintainability; cite the bundled rule references and distinguish correctness issues from style preferences.
+description: Apply Google's Go Style Guide principles and Effective Go's core language idioms when writing, refactoring, or reviewing Go code, either comprehensively or with a natural-language focus. Use for focused or general work on package organization, naming, formatting, comments, language mechanics, API design, errors, context, logging, interfaces, concurrency, documentation, testing, and maintainability; cite the bundled rule references and distinguish correctness issues from style preferences.
 ---
 
 # Google Go Style
@@ -14,6 +14,7 @@ Use this skill to make Go code clear, simple, consistent, and maintainable while
 - Prefer the smallest mechanism that makes the behavior correct and obvious. Do not introduce abstractions, interfaces, helpers, or configuration only to satisfy a style preference.
 - Resolve decisions in this order: correctness and API safety, clarity, simplicity, maintainability, consistency, then personal taste.
 - Use `Must`, `Should`, and `May` precisely. Do not invent a universal rule where the upstream guide leaves room for judgment, especially around line length, package size, or interface placement.
+- Use [`effective-go.md`](references/effective-go.md) for core language mechanics and established idioms. It is supplementary historical guidance, not a source for modern generics, modules, or newer APIs; prefer current Go documentation and the current Google baseline when they differ.
 - Preserve public behavior and error semantics during style refactors. Call out any unavoidable behavior change before making it.
 - Keep comments focused on intent, invariants, constraints, or non-obvious tradeoffs. Do not narrate syntax.
 
@@ -31,12 +32,14 @@ If the user does not name a focus, do not announce one. Preserve the normal task
 | User concern or common wording | Topic references | Interpretation |
 | --- | --- | --- |
 | File structure, package organization, package layout | [`packages-and-documentation.md`](references/packages-and-documentation.md), [`naming-and-comments.md`](references/naming-and-comments.md) | Assess file and package grouping through cohesion, ownership, boundaries, discoverability, and package names. Do not impose a universal `cmd/`, `internal/`, or `pkg/` layout. |
-| Variable, identifier, receiver, or package names | [`naming-and-comments.md`](references/naming-and-comments.md) | Apply idiomatic naming, initialism, scope, receiver, and package-name guidance. |
+| Variable, local, loop, parameter, receiver, or package names; scope, abbreviations, shadowing, or repetition | [`naming-and-comments.md`](references/naming-and-comments.md) | Apply scope-proportional names, conventional abbreviations and initialisms, contextual non-repetition, receiver names, and package-name guidance. |
 | Formatting, imports, line wrapping, or literals | [`formatting-and-imports.md`](references/formatting-and-imports.md) | Apply mechanical formatting, import grouping, readability, and literal guidance. |
 | Comments, doc comments, or documentation | [`naming-and-comments.md`](references/naming-and-comments.md), [`packages-and-documentation.md`](references/packages-and-documentation.md) | Cover intent comments, exported API documentation, configuration, lifecycle, and proximity to code. |
 | Errors, context, logging, cleanup, or cancellation | [`errors-context-and-logging.md`](references/errors-context-and-logging.md), [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md) | Cover error ownership, context propagation, reporting, resources, cancellation, and completion. |
 | Interfaces, concurrency, goroutines, channels, mutexes, or shared state | [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md) | Cover interface ownership and size, goroutine lifetime, synchronization, zero values, and shared state. |
-| API design, functions, arguments, types, control flow, nil, pointers, or generics | [`language-and-api-design.md`](references/language-and-api-design.md), [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md), [`packages-and-documentation.md`](references/packages-and-documentation.md) | Cover language choices and the caller-visible contract, loading only the references needed for the concrete API concern. |
+| Language mechanics, idioms, `defer`, allocation, slices, maps, initialization, embedding, conversions, or the blank identifier | [`effective-go.md`](references/effective-go.md), [`language-and-api-design.md`](references/language-and-api-design.md), [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md) | Apply core-language behavior and idioms, while preferring current Go documentation and the current Google baseline for newer features. |
+| API design, functions, arguments, types, control flow, nil, pointers, or generics | [`language-and-api-design.md`](references/language-and-api-design.md), [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md), [`packages-and-documentation.md`](references/packages-and-documentation.md), [`effective-go.md`](references/effective-go.md) | Cover language choices and the caller-visible contract, loading only the references needed for the concrete API concern. |
+| Flags, logging, contexts, or cryptographic randomness | [`common-libraries.md`](references/common-libraries.md), [`errors-context-and-logging.md`](references/errors-context-and-logging.md) | Apply the common-library decisions at program and API boundaries; preserve repository-specific logging and security conventions. |
 | Tests, test cases, test helpers, or test packages | [`testing.md`](references/testing.md) | Cover observable behavior, test structure, diagnostics, helpers, setup, and package visibility. |
 
 Treat focus as a boundary, not merely a ranking signal. Still report a verified out-of-focus problem when it threatens correctness, API safety, data integrity, security, or resource and goroutine cleanup. Do not classify a general maintainability preference as critical outside the focus. For review, place such findings after the focused findings under `Out-of-focus critical findings`. For writing or refactoring, do not fix them unless the focused work cannot be completed safely without the smallest supporting change; otherwise report them separately.
@@ -74,6 +77,8 @@ Use `P0` for a blocking correctness or safety issue, `P1` for a significant defe
 - [`errors-context-and-logging.md`](references/errors-context-and-logging.md): error flow, wrapping, strings, context propagation, and logging.
 - [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md): interface ownership, zero values, goroutine lifetimes, channels, and cancellation.
 - [`language-and-api-design.md`](references/language-and-api-design.md): literals, receivers, copying, panic policy, generics, and function arguments.
+- [`effective-go.md`](references/effective-go.md): core language mechanics and established idioms for declarations, control flow, defer, allocation, data structures, interfaces, embedding, concurrency, and panic/recover.
+- [`common-libraries.md`](references/common-libraries.md): flags, logging, and cryptographic randomness at program boundaries.
 - [`packages-and-documentation.md`](references/packages-and-documentation.md): package boundaries, utility packages, public APIs, and documentation.
 - [`testing.md`](references/testing.md): subtests, table-driven tests, helpers, test packages, and failure diagnostics.
 - [`review-checklist.md`](references/review-checklist.md): a compact end-to-end review pass.

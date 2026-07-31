@@ -6,6 +6,18 @@ Sources: [`decisions.md`](https://github.com/google/styleguide/blob/gh-pages/go/
 
 Handle errors immediately at the operation that can provide useful context. Keep the success path readable and avoid deeply nested error branches. Never discard an error without a documented reason.
 
+## GO-ERR-005: Return errors as the final result with a clear contract
+
+Use the `error` interface as the final result for operations that can fail, and return `nil` on success. Unless documented otherwise, callers must treat other results as unspecified when `err != nil`; exported functions should not expose a concrete error pointer as their error result.
+
+## GO-ERR-006: Prefer explicit errors over in-band sentinel values
+
+Do not use values such as `-1`, `nil`, or an empty string to signal failure when a second result can express the condition. Return an `error` when callers need an explanation, or a final boolean such as `ok` when they only need presence or absence.
+
+## GO-ERR-007: Discard an error only with a local proof
+
+Do not assign errors to `_` by habit. If an operation is documented to be unable to fail or its failure is intentionally irrelevant, keep the discard local and comment why it is safe.
+
 ## GO-ERR-002: Add context at ownership boundaries
 
 Wrap errors when crossing a package, operation, or user-visible boundary. Include the operation and relevant stable identifier, and preserve the cause with `%w` when callers may need `errors.Is` or `errors.As`.
@@ -22,6 +34,8 @@ Handle an error where the program can recover or choose a policy. Log it at the 
 
 Accept `context.Context` as the first parameter for work that can block, wait, access a remote service, or be cancelled. Pass the caller's context through rather than storing it on a long-lived struct or using a background context to hide ownership.
 
+The first-parameter convention does not require duplicating a context already provided by an HTTP request or streaming RPC; use the request or stream's context directly in those handlers.
+
 ## GO-CTX-002: Make cancellation and cleanup observable
 
 Use timeouts and cancellation at the boundary that owns the operation. Ensure goroutines, timers, response bodies, files, and other resources have a clear cleanup path.
@@ -29,3 +43,5 @@ Use timeouts and cancellation at the boundary that owns the operation. Ensure go
 ## GO-LOG-001: Log actionable facts, not secrets
 
 Use the repository's structured logging convention. Include operation, stable identifiers, and relevant outcomes; never log credentials, tokens, authorization headers, or sensitive payloads.
+
+Prefer a non-formatting logging call when no formatting is needed, and understand whether the repository's fatal or exit helper runs deferred cleanup before using it.

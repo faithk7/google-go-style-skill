@@ -28,3 +28,7 @@ Make changes easy to review, test, extend, and safely remove. Keep related behav
 ## GO-PRINCIPLE-005: Follow local consistency
 
 Use existing package conventions when they are coherent and do not violate correctness. Introduce a new pattern only when it solves a real problem, and keep the migration scope explicit.
+
+## GO-PRINCIPLE-006: Preserve explicit non-decisions
+
+Do not turn unresolved style debates into universal requirements. In particular, permit locally consistent choices between zero-value declarations and equivalent short declarations, empty composite literals and equivalent `new`/`make` forms, `cmp.Diff` argument order, and `errors.New` versus `fmt.Errorf` for a non-formatted string. Require clarity and a documented contract where the choice affects behavior.

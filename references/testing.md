@@ -8,7 +8,7 @@ Cover the public behavior, boundary conditions, cancellation, and meaningful err
 
 ## GO-TEST-002: Use table-driven tests when cases share structure
 
-Use named test rows and subtests for related inputs. Keep each row's setup, action, and want values explicit enough that a failure identifies the scenario.
+Use named test rows and subtests for related inputs. Keep each row's setup, action, and want values explicit enough that a failure identifies the scenario. Split tests when rows require substantially different control flow instead of building a conditional mini-framework inside one table.
 
 ## GO-TEST-003: Make failures diagnostic
 
@@ -25,3 +25,27 @@ Avoid expensive package-wide initialization. Use `TestMain` only for setup that 
 ## GO-TEST-006: Choose test package visibility deliberately
 
 Use same-package tests when private behavior is part of the package's direct contract or needs close unit coverage. Use an external test package when testing only the public API or avoiding implementation coupling.
+
+## GO-TEST-007: Make every failure identify the failed operation
+
+Include the function, relevant input, actual (`got`) value, and expected (`want`) value in a failure. Name complex interactions or cases in the message rather than relying only on the test function name.
+
+## GO-TEST-008: Compare stable semantics, not incidental representation
+
+Compare complete structures with the repository's approved semantic comparison or diff tool instead of hand-checking fields. Avoid asserting byte or string formatting that belongs to a dependency you do not control; test parsed or semantic results instead, and label diff direction clearly.
+
+## GO-TEST-009: Keep independent checks running
+
+Use `t.Error` for independent mismatches so one failure does not hide the next. Use `t.Fatal` only when setup failed or continuing would make later results meaningless; never call fatal methods from a goroutine that does not own the test.
+
+## GO-TEST-010: Keep subtests independent and filterable
+
+Make subtest names concise, descriptive, and safe for `go test -run` filtering; avoid slashes and other characters with special filter meaning. Each subtest should establish its own required state and should be runnable without depending on another row's execution order.
+
+## GO-TEST-011: Do not build assertion libraries
+
+Use the standard `testing` package and write the comparison in the test's domain context. Prefer small helpers that return values or errors and let the test produce the final diagnostic instead of hiding control flow behind a generic assertion DSL.
+
+## GO-TEST-012: Test error semantics, not wording
+
+When the contract is error identity or category, use `errors.Is`, `errors.As`, or an approved semantic comparison. Compare error text only for documented user-facing properties, not as a proxy for the error type.

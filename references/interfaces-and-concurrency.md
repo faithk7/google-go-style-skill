@@ -10,6 +10,8 @@ Define a small interface where it is consumed when the consumer needs substituti
 
 Expose the smallest behavior set that supports the caller. Split an interface when unrelated responsibilities or independent lifetimes make implementations difficult to reason about.
 
+Document an interface's contract, edge cases, ownership, and expected errors. Do not add an interface, mock, or exported test double solely to make a concrete implementation easy to fake; use the real implementation and public API when that gives a more faithful test.
+
 ## GO-CONC-001: Make goroutine lifetimes explicit
 
 For every goroutine, identify who starts it, what stops it, how errors are surfaced, and what synchronization proves completion. Prefer structured ownership with `context`, channels, `sync.WaitGroup`, or an existing project-approved coordination primitive.
@@ -29,3 +31,7 @@ Design types so their zero value is safe and meaningful when doing so does not o
 ## GO-CONC-005: Avoid accidental shared mutable state
 
 Keep mutable state close to its owner. Treat package globals, shared maps, and reused buffers as concurrency boundaries that require explicit synchronization and tests.
+
+## GO-CONC-006: Close channels only as part of an owned protocol
+
+The sender that owns a channel's lifecycle should close it when closure communicates completion. Receivers should generally not close channels, and code must ensure no sender can race with closure or send after close.
