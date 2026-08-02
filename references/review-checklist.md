@@ -4,7 +4,8 @@ Use this checklist after reading the relevant topic reference. Report verified p
 
 ## Correctness and behavior
 
-- Does the change preserve the requested behavior and public API?
+- Does the change preserve the requested runtime behavior, error semantics, and supported public API?
+- If an exported declaration changes, is the source-compatibility impact known and explicitly authorized?
 - Are language semantics based on the current Go specification or standard-library documentation rather than an outdated example?
 - When guidance overlaps, were repository rules, the current Google baseline, and Effective Go applied in the documented authority order?
 - Are errors handled at the right ownership boundary and wrapped with useful context?
@@ -15,7 +16,7 @@ Use this checklist after reading the relevant topic reference. Report verified p
 
 - Can a reader explain what and why the code does without reconstructing hidden state?
 - Is the abstraction justified by a current caller or requirement?
-- Are package, type, function, parameter, receiver, and initialism names idiomatic and non-redundant?
+- Do package, type, constructor, function, method, parameter, receiver, and initialism names read naturally at their call sites without hiding meaningful cost or side effects?
 - Are exported APIs and operational side effects documented?
 
 ## Naming
@@ -25,6 +26,14 @@ Use this checklist after reading the relevant topic reference. Report verified p
 - Are single-letter names limited to conventional receivers, short loops, coordinates, or familiar stream variables?
 - Are names free of accidental shadowing and unnecessary package, type, or value repetition?
 - Are constants named for their role, package aliases consistent, and underscore exceptions limited to generated, test, or interoperability code?
+- Do struct and other type names describe a stable domain, representation, or execution role rather than incidental fields or implementation details?
+
+## Rename safety
+
+- Is the declaration unexported, confined to an `internal` package, or part of an API consumed outside the repository?
+- Were interface implementations, generated code and mocks, tests, examples, documentation, scripts, configuration, reflection strings, and serialization or schema names checked where relevant?
+- Does a repository-wide search account for every reference to the old name, with any retained compatibility name or external-format string treated deliberately?
+- If compatibility is required, was the smallest migration mechanism chosen without adding an alias or deprecated wrapper automatically?
 
 ## Core language idioms
 
@@ -49,7 +58,7 @@ Use this checklist after reading the relevant topic reference. Report verified p
 
 ## Mechanical checks
 
-- Run `gofmt -l` for changed Go files.
-- Run `go vet ./...` when the module and dependencies are available.
-- Run the repository's test command, normally `go test ./...`.
+- Prefer the repository's aggregate check command when it already covers formatting, vetting, and tests; do not repeat equivalent commands without a reason.
+- Otherwise, run `gofmt -l` for changed Go files, `go vet ./...` when dependencies are available, and the relevant tests (normally `go test ./...`).
+- For renames, search for stale identifiers across source, tests, generated inputs, documentation, and configuration.
 - Review the diff for unrelated formatting, generated files, credentials, or new dependencies.

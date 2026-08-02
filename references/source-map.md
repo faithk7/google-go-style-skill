@@ -36,4 +36,4 @@ Use upstream section anchors where available when a decision needs more detail t
 
 ## Update policy
 
-Run `python3 scripts/update-source-manifest.py --check` periodically. Run `python3 scripts/check-effective-go-crosswalk.py` after changing the Effective Go reference or authority policy. When upstream changes, review the affected sections, update only the relevant curated references, and then run the skill validation and example checks. Do not silently replace curated guidance with generated upstream text.
+Run `python3 scripts/validate.py` after changing the skill. Run `python3 scripts/validate.py --check-upstream` periodically to include source-manifest freshness. When upstream changes, review the affected sections, update only the relevant curated references, and rerun validation. Do not silently replace curated guidance with generated upstream text.

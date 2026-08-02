@@ -1,6 +1,6 @@
 ---
 name: google-go-style
-description: Apply Google's Go Style Guide principles and Effective Go's core language idioms when writing, refactoring, or reviewing Go code, either comprehensively or with a natural-language focus. Use for focused or general work on package organization, naming, formatting, comments, language mechanics, API design, errors, context, logging, interfaces, concurrency, documentation, testing, and maintainability; cite the bundled rule references and distinguish correctness issues from style preferences.
+description: Apply Google's Go Style Guide and modern Effective Go idioms when writing, refactoring, or reviewing Go code. Use when the user requests Google Go Style, Effective Go, idiomatic Go, or focused guidance on package organization, identifier naming, formatting, comments, language mechanics, API design, errors, contexts, logging, interfaces, concurrency, documentation, testing, or maintainability; cite the bundled rules and distinguish requirements from preferences.
 ---
 
 # Google Go Style
@@ -15,7 +15,7 @@ Use this skill to make Go code clear, simple, consistent, and maintainable while
 - Resolve decisions in this order: correctness and API safety, clarity, simplicity, maintainability, consistency, then personal taste.
 - Use `Must`, `Should`, and `May` precisely. Do not invent a universal rule where the upstream guide leaves room for judgment, especially around line length, package size, or interface placement.
 - Use [`effective-go.md`](references/effective-go.md) for core language mechanics and established idioms. It is supplementary historical guidance, not a source for modern generics, modules, or newer APIs; prefer current Go documentation and the current Google baseline when they differ.
-- Preserve public behavior and error semantics during style refactors. Call out any unavoidable behavior change before making it.
+- Preserve runtime behavior, error semantics, and source compatibility during style refactors. Before renaming exported API, determine who can import it and call out any unavoidable source break before editing.
 - Keep comments focused on intent, invariants, constraints, or non-obvious tradeoffs. Do not narrate syntax.
 
 ## Authority and conflicts
@@ -35,7 +35,7 @@ Treat Effective Go examples as explanatory, not as mandatory architecture. When 
 When the user names one or more style concerns, treat them as an explicit focus across writing, refactoring, and review:
 
 1. Map the user's natural-language terms to the closest concerns in the focus map below. Combine references when the request names multiple concerns.
-2. Confirm the interpretation before acting and keep the final response self-contained. Use `Focus: <concern(s)>.` in the initial work update when one is sent, and begin the final response with the same line. Keep the wording recognizable to the user.
+2. State the interpretation once in the initial work update when one is sent. Ask a question only when materially different interpretations would change the work. Repeat the focus in the final response only when it helps distinguish multiple concerns or formal review sections.
 3. Load [`principles.md`](references/principles.md) plus only the selected topic references. In review mode, apply only the matching parts of [`review-checklist.md`](references/review-checklist.md).
 4. Limit routine analysis, edits, and findings to the selected concerns. Run the checks needed to prove that the focused change preserves behavior.
 
@@ -45,6 +45,7 @@ If the user does not name a focus, do not announce one. Preserve the normal task
 | --- | --- | --- |
 | File structure, package organization, package layout | [`packages-and-documentation.md`](references/packages-and-documentation.md), [`naming-and-comments.md`](references/naming-and-comments.md) | Assess file and package grouping through cohesion, ownership, boundaries, discoverability, and package names. Do not impose a universal `cmd/`, `internal/`, or `pkg/` layout. |
 | Variable, local, loop, parameter, receiver, or package names; scope, abbreviations, shadowing, or repetition | [`naming-and-comments.md`](references/naming-and-comments.md) | Apply scope-proportional names, conventional abbreviations and initialisms, contextual non-repetition, receiver names, and package-name guidance. |
+| Function, method, constructor, accessor, type, struct, field, interface, or constant names; stutter or call-site readability | [`naming-and-comments.md`](references/naming-and-comments.md), [`packages-and-documentation.md`](references/packages-and-documentation.md), [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md) | Judge the complete `package.Type`, `value.Method`, and constructor call; name domain, transport, and execution types by role; expose meaningful cost or side effects; and assess source compatibility before exported renames. |
 | Formatting, imports, line wrapping, or literals | [`formatting-and-imports.md`](references/formatting-and-imports.md) | Apply mechanical formatting, import grouping, readability, and literal guidance. |
 | Comments, doc comments, or documentation | [`naming-and-comments.md`](references/naming-and-comments.md), [`packages-and-documentation.md`](references/packages-and-documentation.md) | Cover intent comments, exported API documentation, configuration, lifecycle, and proximity to code. |
 | Errors, context, logging, cleanup, or cancellation | [`errors-context-and-logging.md`](references/errors-context-and-logging.md), [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md) | Cover error ownership, context propagation, reporting, resources, cancellation, and completion. |
@@ -61,10 +62,10 @@ Do not reinterpret performance, security, or architecture analysis as Go style. 
 ## Workflow
 
 1. **Establish context.** Identify the requested behavior, affected packages, supported Go version, existing tests, and local policies.
-2. **Resolve focus.** Identify explicit concerns, confirm them when present, and keep concern focus distinct from the requested files or packages.
+2. **Resolve focus.** Identify explicit concerns, state the interpretation when useful, and keep concern focus distinct from the requested files or packages.
 3. **Select references.** Start with [`principles.md`](references/principles.md), then load the focused or otherwise relevant topic files.
 4. **Implement or review.** Apply the rule IDs in the selected references. Prefer standard library facilities and idiomatic control flow. Keep changes scoped to the request.
-5. **Check the result.** Run the repository's normal checks when available. At minimum, consider `gofmt -l`, `go vet ./...`, and `go test ./...`; do not rewrite files or add tooling without authorization.
+5. **Check the result.** Prefer the repository's aggregate check command when it subsumes formatting, vetting, and tests; otherwise run the applicable checks individually. For renames, search the repository for stale identifiers and inspect interface, generated, documentation, reflection, serialization, and configuration references. Do not rewrite files or add tooling without authorization.
 6. **Explain decisions.** For non-obvious choices, cite the rule ID and explain the tradeoff in plain language.
 
 ## Review mode

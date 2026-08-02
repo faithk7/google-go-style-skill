@@ -32,7 +32,7 @@ Use single-letter identifiers for conventional loop indices and coordinates, sho
 
 ## GO-NAME-008: Remove names that repeat their surrounding context
 
-Package, type, method, function, import, and filename context already qualifies names. Prefer `reporting.Report` over `reporting.AdsTargetingRevenueReport`, `(*Project).Name` over `ProjectName`, and `db.Load` over `db.LoadFromDatabase` when the omitted words add no information. Apply this at the call site and keep names that prevent a real collision or ambiguity.
+Package, type, method, function, import, and filename context already qualifies names. Prefer `reporting.Report` over `reporting.AdsTargetingRevenueReport`, `(*Project).Name` over `ProjectName`, and `db.Load` over `db.LoadFromDatabase` when the omitted words add no information. Apply this at the call site and keep names that prevent a real collision or ambiguity. There is no universal ban on names such as `Config`, `Client`, `Service`, or `Store`; change them only when the package-qualified name obscures the role or stutters without adding meaning.
 
 ## GO-NAME-009: Use constants for roles, not values
 
@@ -49,6 +49,18 @@ Do not use underscores in ordinary Go identifiers. The narrow exceptions are gen
 ## GO-NAME-012: Avoid redundant `Get` prefixes
 
 Name accessors after the value they expose (`Counts`, not `GetCounts`) unless the domain concept itself is a get operation, such as HTTP GET. Use a name such as `Compute` or `Fetch` when the call performs work or a remote operation so its cost and failure potential are visible.
+
+## GO-NAME-013: Judge API names at the call site
+
+Read exported declarations as callers see them: `package.Type`, `value.Method`, and `package.New(...)`. Prefer a noun for a value or type and a verb for an operation. Use `New` when package context makes the constructed type obvious; retain a qualified constructor such as `NewClient` when the package constructs several public types or `New` would be ambiguous. Keep method names specific enough to reveal meaningful work or side effects without repeating the receiver type.
+
+Examples are contextual rather than automatic substitutions: `notion.New` may be clearer than `notion.NewStore` in a package centered on one store, while `image.NewDecoder` distinguishes one of several constructed types. A remote `client.FetchProgress` may communicate cost better than `client.Progress`, while a cheap field-like accessor should remain noun-like.
+
+## GO-NAME-014: Name types for their role
+
+Name a type for the role callers or maintainers reason about, not merely its fields or an incidental implementation detail. Domain values should use domain nouns (`Book`); transport representations may use a representation qualifier (`bookRecord`); work passed through a queue may use an execution role (`bookJob`). A structural name such as `indexedBook` is appropriate only when being indexed is the enduring abstraction rather than an implementation detail.
+
+Choose among broad role names such as `Config`, `Settings`, `Options`, `Client`, `Service`, and `Store` by reading the package-qualified name and constructor call. Do not rename a coherent local convention merely to prefer one synonym.
 
 ## GO-COMMENT-001: Write doc comments for exported API
 
