@@ -1,6 +1,6 @@
 # Naming and Comments
 
-Sources: [`decisions.md#naming`](https://github.com/google/styleguide/blob/gh-pages/go/decisions.md#naming), [`decisions.md#variable-names`](https://github.com/google/styleguide/blob/gh-pages/go/decisions.md#variable-names), [`decisions.md#repetition`](https://github.com/google/styleguide/blob/gh-pages/go/decisions.md#repetition), and [`best-practices.md#naming`](https://github.com/google/styleguide/blob/gh-pages/go/best-practices.md#naming).
+Sources: [`decisions.md#naming`](https://github.com/google/styleguide/blob/gh-pages/go/decisions.md#naming), [`decisions.md#variable-names`](https://github.com/google/styleguide/blob/gh-pages/go/decisions.md#variable-names), [`decisions.md#repetition`](https://github.com/google/styleguide/blob/gh-pages/go/decisions.md#repetition), [`best-practices.md#naming`](https://github.com/google/styleguide/blob/gh-pages/go/best-practices.md#naming), and [`best-practices.md#shadowing`](https://github.com/google/styleguide/blob/gh-pages/go/best-practices.md#shadowing).
 
 ## GO-NAME-001: Use idiomatic Go names
 
@@ -40,7 +40,9 @@ Name constants with `MixedCaps` like other identifiers, and describe the role th
 
 ## GO-NAME-010: Avoid accidental name shadowing
 
-Do not introduce a local name that hides a package, parameter, outer variable, or important error value when that makes the active value difficult to identify. A short declaration is acceptable only when its scope and rebinding are obvious; otherwise choose a distinct name or a regular declaration.
+Do not introduce a local name that hides a package, parameter, outer variable, or important error value when that makes the active value difficult to identify. Distinguish deliberate reassignment in the same scope from shadowing in a nested scope: `ctx, cancel := context.WithTimeout(ctx, d)` replaces `ctx` only when both declarations remain in the same scope, while the same statement inside an `if` creates a new `ctx` that disappears after the block.
+
+When a nested block must update an outer value, declare any new companion result first and use `=` explicitly, for example `var cancel context.CancelFunc` followed by `ctx, cancel = context.WithTimeout(ctx, d)`. A fresh name is better when both values remain meaningful. Avoid shadowing common package names such as `url`, `http`, or `json` beyond a very small scope because it prevents later package use.
 
 ## GO-NAME-011: Keep underscore exceptions explicit
 
@@ -52,7 +54,9 @@ Name accessors after the value they expose (`Counts`, not `GetCounts`) unless th
 
 ## GO-NAME-013: Judge API names at the call site
 
-Read exported declarations as callers see them: `package.Type`, `value.Method`, and `package.New(...)`. Prefer a noun for a value or type and a verb for an operation. Use `New` when package context makes the constructed type obvious; retain a qualified constructor such as `NewClient` when the package constructs several public types or `New` would be ambiguous. Keep method names specific enough to reveal meaningful work or side effects without repeating the receiver type.
+Read exported declarations as callers see them: `package.Type`, `value.Method`, and `package.New(...)`. Prefer a noun-like name for a query that returns a value and a verb-like name for an operation. Omit input, output, pointer, package, and receiver type words when the signature and call site already supply them: prefer `yamlconfig.Parse`, `cfg.WriteTo`, and `Transform` over `ParseYAMLConfig`, `WriteConfigTo`, and `TransformToJSON` when no ambiguity remains.
+
+Use `New` when package context makes the constructed type obvious; retain a qualified constructor such as `NewClient` when the package constructs several public types or `New` would be ambiguous. When parallel operations differ only by type, put the distinguishing type at the end (`ParseInt`, `ParseInt64`); omit it for a clear primary form (`Marshal`, `MarshalText`). Keep extra words when they distinguish real behaviors such as `WriteTextTo` and `WriteBinaryTo`.
 
 Examples are contextual rather than automatic substitutions: `notion.New` may be clearer than `notion.NewStore` in a package centered on one store, while `image.NewDecoder` distinguishes one of several constructed types. A remote `client.FetchProgress` may communicate cost better than `client.Progress`, while a cheap field-like accessor should remain noun-like.
 
@@ -61,6 +65,12 @@ Examples are contextual rather than automatic substitutions: `notion.New` may be
 Name a type for the role callers or maintainers reason about, not merely its fields or an incidental implementation detail. Domain values should use domain nouns (`Book`); transport representations may use a representation qualifier (`bookRecord`); work passed through a queue may use an execution role (`bookJob`). A structural name such as `indexedBook` is appropriate only when being indexed is the enduring abstraction rather than an implementation detail.
 
 Choose among broad role names such as `Config`, `Settings`, `Options`, `Client`, `Service`, and `Store` by reading the package-qualified name and constructor call. Do not rename a coherent local convention merely to prefer one synonym.
+
+## GO-NAME-015: Name reusable test doubles from package context and behavior
+
+Create a separate `<package>test` helper package only when doubles or validation helpers are reused across packages. If it doubles one obvious production type, concise exported names such as `Stub`, `Fake`, or `Spy` read naturally with the helper package qualifier. If it doubles several production types, include the type role (`StubService`, `StubStore`); if behaviors differ, prefer behavior names such as `AlwaysSucceeds` or `AlwaysDeclines`.
+
+Within a test, name a double to distinguish it from the production value when both appear, such as `spyClient` rather than `client`. Do not export a double, helper package, or interface solely to make one package's internal tests convenient; keep local test support local unless a real external consumer exists.
 
 ## GO-COMMENT-001: Write doc comments for exported API
 

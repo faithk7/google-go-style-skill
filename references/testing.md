@@ -16,7 +16,9 @@ Identify the function, input, got value, and want value. Use stable comparisons 
 
 ## GO-TEST-004: Keep helpers honest
 
-Mark test helpers with `t.Helper()`. Do not call `t.Fatal` from a goroutine that does not own the test; return the failure to the test goroutine or use an assertion that is safe for the execution model.
+Use helpers for setup, cleanup, or reusable operations rather than hiding domain assertions. Mark a helper with `t.Helper()` when it can report a failure, use `t.Cleanup` for owned cleanup, and allow `t.Fatal` only when a failed setup precondition makes the current test or subtest impossible to run. A helper that cannot fail does not need `testing.T`.
+
+Do not call `t.Fatal`, `t.FailNow`, or related methods from a goroutine that does not own the test. Return or send the failure to the test goroutine, or use `t.Error` where concurrent reporting is safe and then stop that goroutine's work.
 
 ## GO-TEST-005: Scope setup to the test that needs it
 
@@ -44,8 +46,12 @@ Make subtest names concise, descriptive, and safe for `go test -run` filtering; 
 
 ## GO-TEST-011: Do not build assertion libraries
 
-Use the standard `testing` package and write the comparison in the test's domain context. Prefer small helpers that return values or errors and let the test produce the final diagnostic instead of hiding control flow behind a generic assertion DSL.
+Use the standard `testing` package and write the comparison in the test's domain context. Keep simple repeated checks inline or unify similar cases in a table. When several tests need complex validation, write a helper that returns a value, `error`, or comparison option and let each `Test` function decide how to fail and which diagnostic context matters. Do not hide control flow behind a generic assertion DSL.
 
 ## GO-TEST-012: Test error semantics, not wording
 
 When the contract is error identity or category, use `errors.Is`, `errors.As`, or an approved semantic comparison. Compare error text only for documented user-facing properties, not as a proxy for the error type.
+
+## GO-TEST-013: Exercise real integration boundaries when practical
+
+For HTTP, RPC, and similar component integrations, prefer the production client and real in-process transport connected to a test server or fake backend. This exercises serialization, middleware, cancellation, and generated client behavior that a hand-written client double can miss. Use a narrower double when the real transport is unavailable, prohibitively expensive, nondeterministic, or outside the behavior under test, and explain that boundary in the test design.

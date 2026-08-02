@@ -20,7 +20,7 @@ In particular, keep function and method signatures on one line when possible, av
 
 ## GO-FMT-004: Make composite literals unambiguous
 
-Use field names in struct literals, especially across package boundaries or when a type has multiple similar fields. Omit redundant type names only when the surrounding literal remains obvious.
+Use field names for struct types defined outside the current package because field order is not a caller-facing contract. For local types, include names when fields are numerous, similar, or selectively omitted. Omit zero-value fields when doing so highlights the meaningful configuration, but keep an explicit zero when it is the behavior under test or otherwise carries intent. Omit repeated element type names in slice and map literals when context remains obvious; retain them when distant or complex entries need the reminder.
 
 ## GO-FMT-005: Keep formatting changes scoped
 

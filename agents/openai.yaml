@@ -1,4 +1,4 @@
 interface:
   display_name: "Google Go Style"
-  short_description: "Focused Google-style Go guidance and review"
-  default_prompt: "Use $google-go-style to review or improve this Go code, following the concerns I name and distinguishing required fixes from optional preferences."
+  short_description: "Detailed Google-style Go guidance and review"
+  default_prompt: "Use $google-go-style to review or improve this Go code, focusing on naming, package and API boundaries, clarity, and practical best practices."

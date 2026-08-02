@@ -1,6 +1,6 @@
 # Errors, Context, and Logging
 
-Sources: [`decisions.md`](https://github.com/google/styleguide/blob/gh-pages/go/decisions.md#errors) and [`best-practices.md`](https://github.com/google/styleguide/blob/gh-pages/go/best-practices.md#error-handling).
+Sources: [`decisions.md#errors`](https://github.com/google/styleguide/blob/gh-pages/go/decisions.md#errors), [`best-practices.md#error-handling`](https://github.com/google/styleguide/blob/gh-pages/go/best-practices.md#error-handling), and [`best-practices.md#documentation-conventions-errors`](https://github.com/google/styleguide/blob/gh-pages/go/best-practices.md#documentation-conventions-errors).
 
 ## GO-ERR-001: Keep error flow visible
 
@@ -20,7 +20,15 @@ Do not assign errors to `_` by habit. If an operation is documented to be unable
 
 ## GO-ERR-002: Add context at ownership boundaries
 
-Wrap errors when crossing a package, operation, or user-visible boundary. Include the operation and relevant stable identifier, and preserve the cause with `%w` when callers may need `errors.Is` or `errors.As`.
+Add information when crossing a package, operation, or user-visible boundary only if it explains what the current layer was trying to accomplish. Include a stable operation or identifier, but do not repeat a path, resource, or failure already present in the underlying error. If the only added word is `failed`, return the original error.
+
+## GO-ERR-008: Preserve or translate error identity deliberately
+
+Use `%w` when callers should inspect the original identity with `errors.Is` or `errors.As`, and document stable sentinel or typed errors that form part of an exported contract. Use `%v`, a canonical status, or a domain error when crossing RPC, IPC, storage, security, or other abstraction boundaries where exposing the implementation error would couple callers to internals. Do not wrap automatically: decide which observers need human context and which need machine-readable identity.
+
+## GO-ERR-009: Make error text follow the error chain
+
+For ordinary contextual wrapping, put `%w` at the end in the form `"operation details: %w"` so printed text proceeds from newest context to oldest cause. A primary sentinel category may appear first as `"%w: details"` when surfacing the category early improves readability. Keep this exception deliberate; avoid placing a wrapped cause mid-sentence or mixing multiple layers into an order that no longer mirrors the chain.
 
 ## GO-ERR-003: Keep error strings machine-neutral
 

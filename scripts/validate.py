@@ -14,6 +14,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 NAME_PATTERN = re.compile(r"[a-z0-9-]{1,64}")
 MARKDOWN_LINK_PATTERN = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
+RULE_HEADING_CANDIDATE_PATTERN = re.compile(r"^#{1,6}\s+GO-")
+RULE_HEADING_PATTERN = re.compile(r"^## (GO-[A-Z]+(?:-[A-Z]+)*-[0-9]{3}): \S.*$")
 
 
 def parse_frontmatter(path: Path) -> dict[str, str]:
@@ -73,6 +75,32 @@ def validate_markdown_links() -> None:
                 raise ValueError(f"{relative_path}: broken local link {raw_target!r}")
 
 
+def validate_rule_headings() -> None:
+    seen: dict[str, tuple[Path, int]] = {}
+    for markdown_path in sorted((ROOT / "references").glob("*.md")):
+        for line_number, line in enumerate(
+            markdown_path.read_text(encoding="utf-8").splitlines(), start=1
+        ):
+            if RULE_HEADING_CANDIDATE_PATTERN.match(line) is None:
+                continue
+            match = RULE_HEADING_PATTERN.fullmatch(line)
+            relative_path = markdown_path.relative_to(ROOT)
+            if match is None:
+                raise ValueError(f"{relative_path}:{line_number}: malformed rule heading")
+
+            rule_id = match.group(1)
+            if rule_id in seen:
+                first_path, first_line = seen[rule_id]
+                raise ValueError(
+                    f"{relative_path}:{line_number}: duplicate rule {rule_id}; "
+                    f"first defined at {first_path}:{first_line}"
+                )
+            seen[rule_id] = (relative_path, line_number)
+
+    if not seen:
+        raise ValueError("references: no GO rule headings found")
+
+
 def validate_manifest() -> None:
     manifest_path = ROOT / "references" / "source-manifest.json"
     with manifest_path.open(encoding="utf-8") as manifest_file:
@@ -97,6 +125,7 @@ def main() -> int:
         skill_name = validate_frontmatter()
         validate_metadata(skill_name)
         validate_markdown_links()
+        validate_rule_headings()
         validate_manifest()
         run_script("check-effective-go-crosswalk.py")
         if args.check_upstream:

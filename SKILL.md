@@ -1,6 +1,6 @@
 ---
 name: google-go-style
-description: Apply Google's Go Style Guide and modern Effective Go idioms when writing, refactoring, or reviewing Go code. Use when the user requests Google Go Style, Effective Go, idiomatic Go, or focused guidance on package organization, identifier naming, formatting, comments, language mechanics, API design, errors, contexts, logging, interfaces, concurrency, documentation, testing, or maintainability; cite the bundled rules and distinguish requirements from preferences.
+description: Apply Google's Go Style Guide and modern Effective Go idioms when writing, refactoring, or reviewing Go code. Use when the user requests Google Go Style, Effective Go, idiomatic Go, or focused guidance on naming, package or API boundaries, dependency design, global state, formatting, comments, language mechanics, API design, errors, contexts, logging, interfaces, concurrency, documentation, testing, clarity, or maintainability; cite the bundled rules and distinguish requirements from preferences.
 ---
 
 # Google Go Style
@@ -17,6 +17,7 @@ Use this skill to make Go code clear, simple, consistent, and maintainable while
 - Use [`effective-go.md`](references/effective-go.md) for core language mechanics and established idioms. It is supplementary historical guidance, not a source for modern generics, modules, or newer APIs; prefer current Go documentation and the current Google baseline when they differ.
 - Preserve runtime behavior, error semantics, and source compatibility during style refactors. Before renaming exported API, determine who can import it and call out any unavoidable source break before editing.
 - Keep comments focused on intent, invariants, constraints, or non-obvious tradeoffs. Do not narrate syntax.
+- When the user asks for detailed guidance, state the preferred choice, the signals that make it appropriate, important exceptions, and a compact example when it resolves ambiguity. Cite the applicable bundled rule and do not inflate a contextual recommendation into a requirement.
 
 ## Authority and conflicts
 
@@ -27,6 +28,8 @@ Resolve overlapping guidance in this order:
 3. The current pinned Google Go Style Guide for modern style and API decisions.
 4. [`effective-go.md`](references/effective-go.md) for historical core-language idioms and examples.
 5. Personal preference.
+
+Within the pinned Google baseline, use `guide.md` for principles, `decisions.md` for the normative style position, and `best-practices.md` for contextual techniques and tradeoffs. A Best Practices recommendation does not become a universal rule when its stated preconditions do not apply.
 
 Treat Effective Go examples as explanatory, not as mandatory architecture. When an older example conflicts with current guidance, preserve the language semantics and apply the current Google rule. In particular, do not use historical `panic`/`recover`, initialization, error-prefix, or library examples to justify behavior that the current baseline rejects.
 
@@ -44,16 +47,17 @@ If the user does not name a focus, do not announce one. Preserve the normal task
 | User concern or common wording | Topic references | Interpretation |
 | --- | --- | --- |
 | File structure, package organization, package layout | [`packages-and-documentation.md`](references/packages-and-documentation.md), [`naming-and-comments.md`](references/naming-and-comments.md) | Assess file and package grouping through cohesion, ownership, boundaries, discoverability, and package names. Do not impose a universal `cmd/`, `internal/`, or `pkg/` layout. |
-| Variable, local, loop, parameter, receiver, or package names; scope, abbreviations, shadowing, or repetition | [`naming-and-comments.md`](references/naming-and-comments.md) | Apply scope-proportional names, conventional abbreviations and initialisms, contextual non-repetition, receiver names, and package-name guidance. |
+| Package or API boundaries, dependency direction, exported surface, global state, registries, dependency injection, or CLI/library separation | [`packages-and-documentation.md`](references/packages-and-documentation.md), [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md), [`language-and-api-design.md`](references/language-and-api-design.md), [`common-libraries.md`](references/common-libraries.md) | Test cohesion from the caller and implementation perspectives, prefer explicit dependencies, justify exported interfaces and package state, and keep program wiring outside reusable libraries. |
+| Variable, local, loop, parameter, receiver, package, test-double, or helper names; scope, abbreviations, shadowing, or repetition | [`naming-and-comments.md`](references/naming-and-comments.md), [`testing.md`](references/testing.md) | Apply scope-proportional names, conventional abbreviations and initialisms, contextual non-repetition, deliberate reassignment, receiver names, and behavior-based test-double names. |
 | Function, method, constructor, accessor, type, struct, field, interface, or constant names; stutter or call-site readability | [`naming-and-comments.md`](references/naming-and-comments.md), [`packages-and-documentation.md`](references/packages-and-documentation.md), [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md) | Judge the complete `package.Type`, `value.Method`, and constructor call; name domain, transport, and execution types by role; expose meaningful cost or side effects; and assess source compatibility before exported renames. |
 | Formatting, imports, line wrapping, or literals | [`formatting-and-imports.md`](references/formatting-and-imports.md) | Apply mechanical formatting, import grouping, readability, and literal guidance. |
-| Comments, doc comments, or documentation | [`naming-and-comments.md`](references/naming-and-comments.md), [`packages-and-documentation.md`](references/packages-and-documentation.md) | Cover intent comments, exported API documentation, configuration, lifecycle, and proximity to code. |
+| Comments, doc comments, or documentation | [`naming-and-comments.md`](references/naming-and-comments.md), [`packages-and-documentation.md`](references/packages-and-documentation.md) | Cover intent comments, exported API documentation, configuration, lifecycle, concurrency, cleanup, rendered documentation, and proximity to code. |
 | Errors, context, logging, cleanup, or cancellation | [`errors-context-and-logging.md`](references/errors-context-and-logging.md), [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md) | Cover error ownership, context propagation, reporting, resources, cancellation, and completion. |
 | Interfaces, concurrency, goroutines, channels, mutexes, or shared state | [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md) | Cover interface ownership and size, goroutine lifetime, synchronization, zero values, and shared state. |
 | Language mechanics, idioms, `defer`, allocation, slices, maps, initialization, embedding, conversions, or the blank identifier | [`effective-go.md`](references/effective-go.md), [`language-and-api-design.md`](references/language-and-api-design.md), [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md) | Apply core-language behavior and idioms, while preferring current Go documentation and the current Google baseline for newer features. |
-| API design, functions, arguments, types, control flow, nil, pointers, or generics | [`language-and-api-design.md`](references/language-and-api-design.md), [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md), [`packages-and-documentation.md`](references/packages-and-documentation.md), [`effective-go.md`](references/effective-go.md) | Cover language choices and the caller-visible contract, loading only the references needed for the concrete API concern. |
+| API design, functions, arguments, option structs, functional options, result parameters, types, control flow, nil, pointers, or generics | [`language-and-api-design.md`](references/language-and-api-design.md), [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md), [`packages-and-documentation.md`](references/packages-and-documentation.md), [`effective-go.md`](references/effective-go.md) | Cover call-site clarity, mechanism cost, language choices, and the caller-visible contract, loading only the references needed for the concrete API concern. |
 | Flags, logging, contexts, or cryptographic randomness | [`common-libraries.md`](references/common-libraries.md), [`errors-context-and-logging.md`](references/errors-context-and-logging.md) | Apply the common-library decisions at program and API boundaries; preserve repository-specific logging and security conventions. |
-| Tests, test cases, test helpers, or test packages | [`testing.md`](references/testing.md) | Cover observable behavior, test structure, diagnostics, helpers, setup, and package visibility. |
+| Tests, test cases, test doubles, test helpers, test packages, or integration transports | [`testing.md`](references/testing.md), [`naming-and-comments.md`](references/naming-and-comments.md) | Cover observable behavior, test structure, diagnostics, helper ownership, setup, package visibility, reusable doubles, and faithful component integration. |
 
 Treat focus as a boundary, not merely a ranking signal. Still report a verified out-of-focus problem when it threatens correctness, API safety, data integrity, security, or resource and goroutine cleanup. Do not classify a general maintainability preference as critical outside the focus. For review, place such findings after the focused findings under `Out-of-focus critical findings`. For writing or refactoring, do not fix them unless the focused work cannot be completed safely without the smallest supporting change; otherwise report them separately.
 
@@ -64,9 +68,9 @@ Do not reinterpret performance, security, or architecture analysis as Go style. 
 1. **Establish context.** Identify the requested behavior, affected packages, supported Go version, existing tests, and local policies.
 2. **Resolve focus.** Identify explicit concerns, state the interpretation when useful, and keep concern focus distinct from the requested files or packages.
 3. **Select references.** Start with [`principles.md`](references/principles.md), then load the focused or otherwise relevant topic files.
-4. **Implement or review.** Apply the rule IDs in the selected references. Prefer standard library facilities and idiomatic control flow. Keep changes scoped to the request.
+4. **Implement or review.** Apply the rule IDs and decision tests in the selected references. Prefer standard library facilities and idiomatic control flow. Keep changes scoped to the request.
 5. **Check the result.** Prefer the repository's aggregate check command when it subsumes formatting, vetting, and tests; otherwise run the applicable checks individually. For renames, search the repository for stale identifiers and inspect interface, generated, documentation, reflection, serialization, and configuration references. Do not rewrite files or add tooling without authorization.
-6. **Explain decisions.** For non-obvious choices, cite the rule ID and explain the tradeoff in plain language.
+6. **Explain decisions.** For non-obvious choices, cite the rule ID, identify the deciding signals, explain the tradeoff in plain language, and name a relevant exception when one exists.
 
 ## Review mode
 

@@ -8,7 +8,7 @@ Use this checklist after reading the relevant topic reference. Report verified p
 - If an exported declaration changes, is the source-compatibility impact known and explicitly authorized?
 - Are language semantics based on the current Go specification or standard-library documentation rather than an outdated example?
 - When guidance overlaps, were repository rules, the current Google baseline, and Effective Go applied in the documented authority order?
-- Are errors handled at the right ownership boundary and wrapped with useful context?
+- Are errors handled at the right ownership boundary, annotated without repetition, and either wrapped or translated according to the caller-visible contract?
 - Can cancellation, cleanup, and goroutine completion be proven?
 - Are nil, zero, empty, timeout, retry, and partial-failure cases explicit?
 
@@ -17,7 +17,18 @@ Use this checklist after reading the relevant topic reference. Report verified p
 - Can a reader explain what and why the code does without reconstructing hidden state?
 - Is the abstraction justified by a current caller or requirement?
 - Do package, type, constructor, function, method, parameter, receiver, and initialism names read naturally at their call sites without hiding meaningful cost or side effects?
-- Are exported APIs and operational side effects documented?
+- Does a complex signature use ordinary parameters, an options struct, or functional options for a reason supported by its actual call patterns?
+- Are exported APIs and operational side effects documented, with one discoverable package comment and `doc.go` used only when it improves navigation?
+
+## Boundaries
+
+- Would callers normally need both sides of a proposed package split, or would splitting force paired imports, exported plumbing, or an interface created only to avoid a cycle?
+- Are types and their core behavior close to the responsibility that owns or uses them, without generic `types`, `models`, or one-type-per-file organization?
+- Does each public import path express a stable package identity rather than incidental repository structure, with any path move treated as a compatibility change?
+- Does an ordinary `package main` keep implementation details unexported and move genuinely reusable behavior behind an importable package API?
+- Does each exported interface have a real consumer or protocol role, live with the right owner, and contain only the methods that role needs?
+- Do stateful libraries expose isolated instances and explicit dependencies instead of process-wide registries, setters, replaceable clients, or hidden initialization order?
+- Is CLI wiring kept at the program boundary, with reusable behavior available through ordinary Go APIs and the command's context propagated?
 
 ## Naming
 
@@ -25,8 +36,10 @@ Use this checklist after reading the relevant topic reference. Report verified p
 - Does each local name describe the value's current meaning rather than its source, type, or surrounding package/type context?
 - Are single-letter names limited to conventional receivers, short loops, coordinates, or familiar stream variables?
 - Are names free of accidental shadowing and unnecessary package, type, or value repetition?
+- Where a nested block updates an outer value, is reassignment explicit rather than an accidental `:=` shadow?
 - Are constants named for their role, package aliases consistent, and underscore exceptions limited to generated, test, or interoperability code?
 - Do struct and other type names describe a stable domain, representation, or execution role rather than incidental fields or implementation details?
+- Are reusable test doubles named from package context, doubled role, and behavior without exporting test support that has no external consumer?
 
 ## Rename safety
 
@@ -38,6 +51,7 @@ Use this checklist after reading the relevant topic reference. Report verified p
 ## Core language idioms
 
 - Are short declarations, variable scope, and shadowing clear?
+- Do declarations distinguish intentional zero values, known members, and evidence-based capacity hints?
 - Is `defer` scoped to the resource owner, without retaining resources across an unbounded loop?
 - Are `new`, `make`, composite literals, slices, `append`, nil maps, and comma-ok lookups used with their actual language semantics?
 - Are receiver choices, embedding, type assertions, and blank-identifier uses intentional and visible at the API boundary?
@@ -54,6 +68,8 @@ Use this checklist after reading the relevant topic reference. Report verified p
 - Do tests cover observable behavior and error semantics?
 - Are cases named and failures diagnostic?
 - Are test helpers safe for their goroutine and marked with `t.Helper()`?
+- Do assertion decisions remain in the test, with shared validation returning values, errors, or comparison options?
+- Do component tests use the production client and real in-process transport when that boundary is practical and relevant?
 - Is setup scoped and cleanup deterministic?
 
 ## Mechanical checks

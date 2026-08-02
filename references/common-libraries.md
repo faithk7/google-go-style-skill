@@ -1,10 +1,12 @@
 # Common Library Decisions
 
-Source: [`decisions.md#common-libraries`](https://github.com/google/styleguide/blob/gh-pages/go/decisions.md#common-libraries), with repository-local logging and security conventions taking precedence.
+Sources: [`decisions.md#common-libraries`](https://github.com/google/styleguide/blob/gh-pages/go/decisions.md#common-libraries) and [`best-practices.md#complex-command-line-interfaces`](https://github.com/google/styleguide/blob/gh-pages/go/best-practices.md#complex-command-line-interfaces), with repository-local logging and security conventions taking precedence.
 
 ## GO-LIB-001: Keep flags at the program boundary
 
 Define command-line flags in `package main` or its equivalent. Use snake_case for the external flag name and ordinary Go identifier style for the variable; configure reusable packages through Go APIs instead of package-level flags or hidden global state.
+
+Keep a complex CLI as a thin client of reusable library code when the behavior also has non-CLI consumers. Subcommands do not each require a package; apply ordinary cohesion tests. Use a command framework only when its features justify the dependency, follow the repository's existing choice, and propagate the context supplied by the command rather than creating a new root context.
 
 ## GO-LIB-002: Match logging calls to their intent
 
