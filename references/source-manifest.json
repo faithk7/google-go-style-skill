@@ -8,6 +8,14 @@
     "go/decisions.md",
     "go/best-practices.md"
   ],
+  "tooling_documents": [
+    {
+      "name": "Go command generate documentation",
+      "url": "https://pkg.go.dev/cmd/go#hdr-Generate_Go_files_by_processing_source",
+      "reviewed": "2026-08-16",
+      "note": "Authoritative tool contract for generated-file markers and go generate behavior."
+    }
+  ],
   "supplementary_documents": [
     {
       "name": "Effective Go",

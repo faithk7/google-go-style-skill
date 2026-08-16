@@ -1,0 +1,26 @@
+name: CI
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  validate:
+    name: validate skill
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+
+      - name: Test validator
+        run: python3 -m unittest discover -s tests -p 'test_*.py'
+
+      - name: Validate skill
+        run: python3 scripts/validate.py

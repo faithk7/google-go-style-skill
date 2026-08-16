@@ -6,6 +6,8 @@ Sources: [`decisions.md`](https://github.com/google/styleguide/blob/gh-pages/go/
 
 Cover the public behavior, boundary conditions, cancellation, and meaningful error identity or context. Do not increase coverage by asserting implementation details that callers cannot observe.
 
+When behavior varies by operating system or architecture, exercise the affected filename suffixes, build constraints, and target compilation. Do not require a full platform matrix for an unrelated change; select the targets that can observe the behavior.
+
 ## GO-TEST-002: Use table-driven tests when cases share structure
 
 Use named test rows and subtests for related inputs. Keep each row's setup, action, and want values explicit enough that a failure identifies the scenario. Split tests when rows require substantially different control flow instead of building a conditional mini-framework inside one table.
@@ -47,6 +49,8 @@ Make subtest names concise, descriptive, and safe for `go test -run` filtering; 
 ## GO-TEST-011: Do not build assertion libraries
 
 Use the standard `testing` package and write the comparison in the test's domain context. Keep simple repeated checks inline or unify similar cases in a table. When several tests need complex validation, write a helper that returns a value, `error`, or comparison option and let each `Test` function decide how to fail and which diagnostic context matters. Do not hide control flow behind a generic assertion DSL.
+
+An existing assertion dependency is evidence of a local convention, not a change to the Google baseline. Do not perform an unrelated mass conversion solely for style. When a deliberate repository policy requires that dependency, follow it while keeping control flow, failure context, and the distinction between setup failures and independent mismatches visible.
 
 ## GO-TEST-012: Test error semantics, not wording
 

@@ -9,10 +9,18 @@ This skill distills the public Google Go Style Guide into task-sized references.
 - Branch: `gh-pages`
 - Tracked commit: see [`source-manifest.json`](source-manifest.json)
 
+## Go tooling source
+
+- [Go command `generate` documentation](https://pkg.go.dev/cmd/go#hdr-Generate_Go_files_by_processing_source): the tool-facing generated-file marker and execution semantics. It supplies the mechanical contract for recognizing generated Go source, not a general exemption from style or correctness review.
+
 ## Supplementary source
 
 - [Effective Go](https://go.dev/doc/effective_go): core language mechanics and established idioms. The page notes that it was written for Go's 2009 release and is not actively updated; it is used here as historical supplementary guidance rather than as the authority for modern language or ecosystem features.
 - [Style guideline for Go packages](https://rakyll.org/style-packages/) ([archived snapshot](https://web.archive.org/web/20260110162648/https://rakyll.org/style-packages/)): 2017 package-organization advice used only where it remains compatible with modules and the current Google baseline. Its GOPATH layout, blanket singular-name, vanity-import-comment, and import-alias prescriptions are not adopted as universal rules.
+
+## Non-authoritative case study
+
+- [`openai/openai-cli` at `68e3e707ef68bebda13e638fafdb4a882ccafedc`](https://github.com/openai/openai-cli/tree/68e3e707ef68bebda13e638fafdb4a882ccafedc): reviewed for generated-command boundaries, external interface names, CLI error presentation, injected I/O, and platform checks. It is practical evidence only; its generated layout, testing dependencies, and local inconsistencies do not override the authority order below.
 
 ## Authority
 
@@ -28,6 +36,7 @@ Use the current Go specification and standard-library documentation for language
 | `errors-context-and-logging.md` | `decisions.md`, `best-practices.md` | Errors; contexts; logging |
 | `interfaces-and-concurrency.md` | `decisions.md`, `best-practices.md` | Interfaces; goroutine lifetimes; channels; global state |
 | `language-and-api-design.md` | `decisions.md`, `best-practices.md` | Language; function arguments; variables; APIs |
+| `generated-code-and-contracts.md` | Go command `generate` documentation; `best-practices.md` | Generated markers; authoritative edit points; external interface and schema contracts; regeneration |
 | `packages-and-documentation.md` | `best-practices.md`; Rakyll package article | Package size; utility packages; file organization; import paths; executable exports; documentation |
 | `testing.md` | `decisions.md`, `best-practices.md` | Test structure; test failures; helpers |
 | `common-libraries.md` | `decisions.md` | Flags; logging; contexts; cryptographic randomness |
@@ -44,6 +53,7 @@ Use upstream section anchors where available when a decision needs more detail t
 | Clarity | [`guide.md#clarity`](https://github.com/google/styleguide/blob/gh-pages/go/guide.md#clarity), [`decisions.md#commentary`](https://github.com/google/styleguide/blob/gh-pages/go/decisions.md#commentary), [`decisions.md#language`](https://github.com/google/styleguide/blob/gh-pages/go/decisions.md#language), [`best-practices.md#documentation`](https://github.com/google/styleguide/blob/gh-pages/go/best-practices.md#documentation) | `GO-PRINCIPLE-*`, `GO-FMT-*`, `GO-DOC-*`, `GO-LANG-*` |
 | Effectiveness | [`guide.md#least-mechanism`](https://github.com/google/styleguide/blob/gh-pages/go/guide.md#least-mechanism), [`best-practices.md#function-argument-lists`](https://github.com/google/styleguide/blob/gh-pages/go/best-practices.md#function-argument-lists), [`best-practices.md#tests`](https://github.com/google/styleguide/blob/gh-pages/go/best-practices.md#tests), [`best-practices.md#string-concatenation`](https://github.com/google/styleguide/blob/gh-pages/go/best-practices.md#string-concatenation) | `GO-LANG-005`, `GO-LANG-013`, `GO-TEST-*` |
 | Context and exceptions | [`decisions.md#non-decisions`](https://github.com/google/styleguide/blob/gh-pages/go/decisions.md#non-decisions), [`best-practices.md#error-handling`](https://github.com/google/styleguide/blob/gh-pages/go/best-practices.md#error-handling), [`best-practices.md#variable-declarations`](https://github.com/google/styleguide/blob/gh-pages/go/best-practices.md#variable-declarations) | `GO-PRINCIPLE-006`, `GO-ERR-*`, `GO-LANG-012` |
+| Generated code and contracts | [Go command `generate` documentation](https://pkg.go.dev/cmd/go#hdr-Generate_Go_files_by_processing_source), [`best-practices.md#interfaces`](https://github.com/google/styleguide/blob/gh-pages/go/best-practices.md#interfaces) | `GO-GEN-*`, compatible `GO-NAME-*`, `GO-API-*`, and `GO-TEST-*` rules |
 
 ## Update policy
 

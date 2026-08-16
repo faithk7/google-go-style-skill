@@ -30,6 +30,13 @@ Use this checklist after reading the relevant topic reference. Report verified p
 - Do stateful libraries expose isolated instances and explicit dependencies instead of process-wide registries, setters, replaceable clients, or hidden initialization order?
 - Is CLI wiring kept at the program boundary, with reusable behavior available through ordinary Go APIs and the command's context propagated?
 
+## Generated code and external contracts
+
+- Is each affected file classified as handwritten, generated, schema-derived, or constrained by an external interface, with the authoritative edit point identified?
+- Does the generated marker use Go's recognized form, or is a repository-specific header being treated only as a local convention?
+- Are names and wire shapes required by an external contract preserved without spreading their exceptions into unconstrained handwritten code?
+- Will a systematic fix be made in the generator, template, schema, or IDL and verified through regeneration rather than patched repeatedly in output files?
+
 ## Naming
 
 - Is each variable's length proportional to its scope and lifetime, with longer names where similar values or distant uses need the reminder?
@@ -62,6 +69,7 @@ Use this checklist after reading the relevant topic reference. Report verified p
 
 - Are flags defined only at the program boundary and kept out of reusable package APIs?
 - Does security-sensitive randomness use `crypto/rand`, and does logging follow the repository's severity and cleanup semantics?
+- Does the process entry point own final error rendering and exit policy while command handlers propagate their supplied context?
 
 ## Testing
 
@@ -71,6 +79,7 @@ Use this checklist after reading the relevant topic reference. Report verified p
 - Do assertion decisions remain in the test, with shared validation returning values, errors, or comparison options?
 - Do component tests use the production client and real in-process transport when that boundary is practical and relevant?
 - Is setup scoped and cleanup deterministic?
+- When platform-specific source or build constraints are affected, are the relevant target builds or tests included?
 
 ## Mechanical checks
 

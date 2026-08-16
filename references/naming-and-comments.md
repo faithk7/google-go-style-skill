@@ -52,6 +52,8 @@ Do not use underscores in ordinary Go identifiers. The narrow exceptions are gen
 
 Name accessors after the value they expose (`Counts`, not `GetCounts`) unless the domain concept itself is a get operation, such as HTTP GET. Use a name such as `Compute` or `Fetch` when the call performs work or a remote operation so its cost and failure potential are visible.
 
+Preserve a `Get` name when the method must satisfy an existing external interface, generated contract, or source-compatibility promise. Verify that requirement before treating it as an exception; nearby handwritten accessors that are not part of the contract still follow the ordinary naming rule.
+
 ## GO-NAME-013: Judge API names at the call site
 
 Read exported declarations as callers see them: `package.Type`, `value.Method`, and `package.New(...)`. Prefer a noun-like name for a query that returns a value and a verb-like name for an operation. Omit input, output, pointer, package, and receiver type words when the signature and call site already supply them: prefer `yamlconfig.Parse`, `cfg.WriteTo`, and `Transform` over `ParseYAMLConfig`, `WriteConfigTo`, and `TransformToJSON` when no ambiguity remains.
