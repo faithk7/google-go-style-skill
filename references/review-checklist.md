@@ -16,6 +16,7 @@ Use this checklist after reading the relevant topic reference. Report verified p
 
 - Can a reader explain what and why the code does without reconstructing hidden state?
 - Is the abstraction justified by a current caller or requirement?
+- For newly authored handwritten packages or types, does the code begin with a compact vocabulary and smallest useful exported API rather than scaffolding speculative layers?
 - Do package, type, constructor, function, method, parameter, receiver, and initialism names read naturally at their call sites without hiding meaningful cost or side effects?
 - Does a complex signature use ordinary parameters, an options struct, or functional options for a reason supported by its actual call patterns?
 - Are exported APIs and operational side effects documented, with one discoverable package comment and `doc.go` used only when it improves navigation?
@@ -29,6 +30,14 @@ Use this checklist after reading the relevant topic reference. Report verified p
 - Does each exported interface have a real consumer or protocol role, live with the right owner, and contain only the methods that role needs?
 - Do stateful libraries expose isolated instances and explicit dependencies instead of process-wide registries, setters, replaceable clients, or hidden initialization order?
 - Is CLI wiring kept at the program boundary, with reusable behavior available through ordinary Go APIs and the command's context propagated?
+
+## Standard-library composition
+
+- Is the zero-value behavior intentional, with a constructor used only when dependencies, invariants, resources, or required configuration justify it?
+- Are files split by coherent responsibility and platform suffixes rather than type symmetry, framework layers, or a copied repository skeleton?
+- Do declaration and method groups form a readable lifecycle or behavioral path, with private helpers near the invariants they support rather than alphabetized mechanically?
+- Does the successful path use direct, shallow control flow, with optional fast paths or abstraction layers justified by an actual contract or evidence?
+- Were compiler, runtime, assembly, generated, `unsafe`, bootstrap, and compatibility patterns rejected unless the target shares their constraints?
 
 ## Generated code and external contracts
 

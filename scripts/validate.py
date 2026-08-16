@@ -190,6 +190,33 @@ def validate_source_entries(manifest_path: Path, field: str, entries: object) ->
             )
 
 
+def validate_reference_repositories(manifest_path: Path, entries: object) -> None:
+    validate_source_entries(manifest_path, "reference_repositories", entries)
+
+    if not isinstance(entries, list):
+        raise ValueError(f"{manifest_path.name}: reference_repositories must be a list")
+    for index, entry in enumerate(entries):
+        if not isinstance(entry, dict):
+            raise ValueError(
+                f"{manifest_path.name}: reference_repositories[{index}] must be an object"
+            )
+        commit = entry.get("commit")
+        if not isinstance(commit, str) or not COMMIT_PATTERN.fullmatch(commit):
+            raise ValueError(
+                f"{manifest_path.name}: reference_repositories[{index}].commit "
+                "must be a full 40-character lowercase SHA"
+            )
+        samples = entry.get("samples")
+        if not isinstance(samples, list) or not samples or not all(
+            isinstance(sample, str) and sample.startswith("src/") and sample.endswith(".go")
+            for sample in samples
+        ):
+            raise ValueError(
+                f"{manifest_path.name}: reference_repositories[{index}].samples "
+                "must be a non-empty list of src/*.go paths"
+            )
+
+
 def validate_manifest(root: Path = ROOT) -> None:
     manifest_path = root / "references" / "source-manifest.json"
     with manifest_path.open(encoding="utf-8") as manifest_file:
@@ -201,6 +228,7 @@ def validate_manifest(root: Path = ROOT) -> None:
         "commit",
         "documents",
         "tooling_documents",
+        "reference_repositories",
         "supplementary_documents",
     }
     missing_fields = sorted(required_fields - set(manifest))
@@ -217,6 +245,7 @@ def validate_manifest(root: Path = ROOT) -> None:
     ):
         raise ValueError(f"{manifest_path.name}: documents must be a non-empty list of paths")
     validate_source_entries(manifest_path, "tooling_documents", manifest["tooling_documents"])
+    validate_reference_repositories(manifest_path, manifest["reference_repositories"])
     validate_source_entries(
         manifest_path,
         "supplementary_documents",

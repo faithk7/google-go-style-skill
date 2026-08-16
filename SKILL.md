@@ -1,6 +1,6 @@
 ---
 name: google-go-style
-description: Apply Google's Go Style Guide and modern Effective Go idioms when writing, refactoring, or reviewing Go code. Use when the user requests Google Go Style, Effective Go, idiomatic Go, or focused guidance on naming, package or API boundaries, generated code, code generation, external contracts, dependency design, global state, formatting, comments, language mechanics, API design, errors, contexts, logging, interfaces, concurrency, documentation, testing, clarity, or maintainability; cite the bundled rules and distinguish requirements from preferences.
+description: Apply Google's Go Style Guide, modern Effective Go idioms, and compatible Go standard-library composition when writing, refactoring, or reviewing Go code. Use when the user requests Google Go Style, Effective Go, idiomatic or standard-library-like Go, or focused guidance on naming, package or API boundaries, declaration or method organization, generated code, code generation, external contracts, dependency design, global state, formatting, comments, language mechanics, API design, errors, contexts, logging, interfaces, concurrency, documentation, testing, clarity, or maintainability; cite the bundled rules and distinguish requirements from preferences.
 ---
 
 # Google Go Style
@@ -11,6 +11,7 @@ Use this skill to make Go code clear, simple, consistent, and maintainable while
 
 - Inspect repository instructions, `go.mod`, package boundaries, and nearby code before choosing a pattern.
 - Classify affected files as handwritten, generated, schema-derived, or constrained by an external interface before recommending style changes. Locate the authoritative generator, template, schema, or interface when one exists.
+- When writing new code, shape the package contract and smallest useful API before filling in implementation. Use [`standard-library-style.md`](references/standard-library-style.md) to choose organization, naming, method layout, and implementation patterns only after higher-authority rules and local conventions are satisfied.
 - Treat explicit repository-local instructions as overrides only where they are deliberate and documented. Read `AGENTS.md` and `.go-style.md` when present.
 - Prefer the smallest mechanism that makes the behavior correct and obvious. Do not introduce abstractions, interfaces, helpers, or configuration only to satisfy a style preference.
 - Resolve decisions in this order: correctness and API safety, clarity, simplicity, maintainability, consistency, then personal taste.
@@ -34,6 +35,8 @@ Within the pinned Google baseline, use `guide.md` for principles, `decisions.md`
 
 Treat Effective Go examples as explanatory, not as mandatory architecture. When an older example conflicts with current guidance, preserve the language semantics and apply the current Google rule. In particular, do not use historical `panic`/`recover`, initialization, error-prefix, or library examples to justify behavior that the current baseline rejects.
 
+Use the pinned handwritten `golang/go` samples as a non-normative implementation exemplar after resolving the rules above. They help choose among otherwise valid designs; they do not override repository policy, the Google baseline, or documented exceptions. Do not imitate compiler, runtime, assembly, generated, `unsafe`, or compatibility-driven patterns without the same constraints.
+
 ## Focused requests
 
 When the user names one or more style concerns, treat them as an explicit focus across writing, refactoring, and review:
@@ -48,6 +51,7 @@ If the user does not name a focus, do not announce one. Preserve the normal task
 | User concern or common wording | Topic references | Interpretation |
 | --- | --- | --- |
 | File structure, package organization, package layout | [`packages-and-documentation.md`](references/packages-and-documentation.md), [`naming-and-comments.md`](references/naming-and-comments.md) | Assess file and package grouping through cohesion, ownership, boundaries, discoverability, and package names. Do not impose a universal `cmd/`, `internal/`, or `pkg/` layout. |
+| Go standard-library style, `golang/go` style, declaration order, method organization, implementation shape, or writing a new package or type | [`standard-library-style.md`](references/standard-library-style.md), [`packages-and-documentation.md`](references/packages-and-documentation.md), [`naming-and-comments.md`](references/naming-and-comments.md), [`language-and-api-design.md`](references/language-and-api-design.md), [`formatting-and-imports.md`](references/formatting-and-imports.md) | Start from a compact package vocabulary, useful zero values and explicit ownership, responsibility-based files, coherent method groups, direct control flow, and `gofmt`-defined mechanics. Treat repository examples as compatible composition evidence rather than authority. |
 | Generated code, code generation, generators, templates, schema or IDL output, generated markers, or external interface compatibility | [`generated-code-and-contracts.md`](references/generated-code-and-contracts.md), [`naming-and-comments.md`](references/naming-and-comments.md), [`testing.md`](references/testing.md) | Identify the authoritative edit point, preserve required contract names and wire shapes, keep generated exceptions from leaking into handwritten code, and validate regeneration rather than editing systematic output by hand. |
 | Package or API boundaries, dependency direction, exported surface, global state, registries, dependency injection, or CLI/library separation | [`packages-and-documentation.md`](references/packages-and-documentation.md), [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md), [`language-and-api-design.md`](references/language-and-api-design.md), [`common-libraries.md`](references/common-libraries.md) | Test cohesion from the caller and implementation perspectives, prefer explicit dependencies, justify exported interfaces and package state, and keep program wiring outside reusable libraries. |
 | Variable, local, loop, parameter, receiver, package, test-double, or helper names; scope, abbreviations, shadowing, or repetition | [`naming-and-comments.md`](references/naming-and-comments.md), [`testing.md`](references/testing.md) | Apply scope-proportional names, conventional abbreviations and initialisms, contextual non-repetition, deliberate reassignment, receiver names, and behavior-based test-double names. |
@@ -69,7 +73,7 @@ Do not reinterpret performance, security, or architecture analysis as Go style. 
 
 1. **Establish context.** Identify the requested behavior, affected packages, supported Go version, existing tests, local policies, source provenance, and any generator or external contract that owns the code shape.
 2. **Resolve focus.** Identify explicit concerns, state the interpretation when useful, and keep concern focus distinct from the requested files or packages.
-3. **Select references.** Start with [`principles.md`](references/principles.md), then load the focused or otherwise relevant topic files.
+3. **Select references.** Start with [`principles.md`](references/principles.md), then load the focused or otherwise relevant topic files. For new packages, types, or substantial implementations, also load [`standard-library-style.md`](references/standard-library-style.md) unless the user set a narrower explicit focus that does not select standard-library composition.
 4. **Implement or review.** Apply the rule IDs and decision tests in the selected references. Prefer standard library facilities and idiomatic control flow. Keep changes scoped to the request.
 5. **Check the result.** Prefer the repository's aggregate check command when it subsumes formatting, vetting, and tests; otherwise run the applicable checks individually. For renames, search the repository for stale identifiers and inspect interface, generated, documentation, reflection, serialization, and configuration references. Do not rewrite files or add tooling without authorization.
 6. **Explain decisions.** For non-obvious choices, cite the rule ID, identify the deciding signals, explain the tradeoff in plain language, and name a relevant exception when one exists.
@@ -98,6 +102,7 @@ For a generated finding, use the generator, template, schema, or IDL as `Locatio
 - [`errors-context-and-logging.md`](references/errors-context-and-logging.md): error flow, wrapping, strings, context propagation, and logging.
 - [`interfaces-and-concurrency.md`](references/interfaces-and-concurrency.md): interface ownership, zero values, goroutine lifetimes, channels, and cancellation.
 - [`language-and-api-design.md`](references/language-and-api-design.md): literals, receivers, copying, panic policy, generics, and function arguments.
+- [`standard-library-style.md`](references/standard-library-style.md): compatible `golang/go` composition patterns for package surfaces, names, files, method groups, direct implementations, and comments.
 - [`generated-code-and-contracts.md`](references/generated-code-and-contracts.md): generated-source provenance, external contracts, authoritative edit points, and regeneration checks.
 - [`effective-go.md`](references/effective-go.md): core language mechanics and established idioms for formatting, names, control flow, functions, data structures, initialization, interfaces, embedding, concurrency, errors, and panic/recover.
 - [`common-libraries.md`](references/common-libraries.md): flags, logging, and cryptographic randomness at program boundaries.

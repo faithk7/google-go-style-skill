@@ -82,6 +82,30 @@ class ValidatorTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, r"tooling_documents\[0\]\.url"):
             validate.validate_manifest(self.root)
 
+    def test_manifest_reference_repository_requires_full_commit(self) -> None:
+        manifest_path = self.root / "references" / "source-manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["reference_repositories"][0]["commit"] = "72aa6db"
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"reference_repositories\[0\]\.commit must be a full 40-character lowercase SHA",
+        ):
+            validate.validate_manifest(self.root)
+
+    def test_manifest_reference_repository_requires_go_samples(self) -> None:
+        manifest_path = self.root / "references" / "source-manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["reference_repositories"][0]["samples"] = []
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"reference_repositories\[0\]\.samples must be a non-empty list",
+        ):
+            validate.validate_manifest(self.root)
+
     def test_duplicate_rule_id_is_rejected(self) -> None:
         reference = self.root / "references" / "generated-code-and-contracts.md"
         with reference.open("a", encoding="utf-8") as reference_file:

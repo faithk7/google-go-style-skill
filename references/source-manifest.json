@@ -16,7 +16,34 @@
       "note": "Authoritative tool contract for generated-file markers and go generate behavior."
     }
   ],
+  "reference_repositories": [
+    {
+      "name": "Go standard library implementation samples",
+      "url": "https://github.com/golang/go",
+      "commit": "72aa6db7943024b48c4d41c1fbc32b57b9fa036e",
+      "reviewed": "2026-08-16",
+      "scope": "Recurring composition patterns in handwritten public standard-library packages; excludes runtime, compiler, assembly, generated, unsafe, bootstrap, and compatibility-specific code.",
+      "samples": [
+        "src/bytes/buffer.go",
+        "src/bytes/reader.go",
+        "src/io/io.go",
+        "src/io/pipe.go",
+        "src/archive/zip/reader.go",
+        "src/archive/zip/writer.go",
+        "src/net/http/client.go",
+        "src/os/file.go",
+        "src/sync/map.go",
+        "src/slices/slices.go"
+      ]
+    }
+  ],
   "supplementary_documents": [
+    {
+      "name": "Go Code Review Comments",
+      "url": "https://go.dev/wiki/CodeReviewComments",
+      "reviewed": "2026-08-16",
+      "note": "Official Go project review guidance used only where compatible with the pinned Google baseline."
+    },
     {
       "name": "Effective Go",
       "url": "https://go.dev/doc/effective_go",
