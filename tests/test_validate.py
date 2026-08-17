@@ -43,6 +43,13 @@ class ValidatorTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "must declare sources"):
             validate.validate_rule_sources(self.root)
 
+    def test_readme_local_links_are_validated(self) -> None:
+        readme_path = self.root / "README.md"
+        readme_path.write_text("[missing](references/missing.md)\n", encoding="utf-8")
+
+        with self.assertRaisesRegex(ValueError, "broken local link"):
+            validate.validate_markdown_links(self.root)
+
     def test_rule_bearing_reference_must_be_registered(self) -> None:
         skill_path = self.root / "SKILL.md"
         lines = skill_path.read_text(encoding="utf-8").splitlines()

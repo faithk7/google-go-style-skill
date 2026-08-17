@@ -68,7 +68,12 @@ def validate_metadata(skill_name: str, root: Path = ROOT) -> None:
 
 
 def validate_markdown_links(root: Path = ROOT) -> None:
-    for markdown_path in [root / "SKILL.md", *sorted((root / "references").glob("*.md"))]:
+    markdown_paths = [root / "SKILL.md", *sorted((root / "references").glob("*.md"))]
+    readme_path = root / "README.md"
+    if readme_path.exists():
+        markdown_paths.append(readme_path)
+
+    for markdown_path in markdown_paths:
         text = markdown_path.read_text(encoding="utf-8")
         for raw_target in MARKDOWN_LINK_PATTERN.findall(text):
             target = raw_target.strip().strip("<>").split("#", 1)[0]
