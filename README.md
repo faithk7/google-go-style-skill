@@ -1,7 +1,5 @@
 # Google Go Style Skill
 
-[![CI](https://github.com/faithk7/google-go-style-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/faithk7/google-go-style-skill/actions/workflows/ci.yml)
-
 A Codex skill for writing, refactoring, and reviewing clear, idiomatic Go. It combines the current Google Go Style Guide with compatible Effective Go idioms and recurring composition patterns from handwritten Go standard-library packages.
 
 ## What it does
